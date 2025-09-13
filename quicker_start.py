@@ -26,13 +26,14 @@ if __name__ == "__main__":
         with open(pickle_path, 'wb') as f:
             pickle.dump((Xtrain, ytrain, Xval, yval), f)
 
-    #to_dispose = [1885, 3427, 3546, 5074, 6924, 7103, 7102, 8140]
-    #Xtrain = np.delete(Xtrain, to_dispose, axis=0)
-    #ytrain = np.delete(ytrain, to_dispose, axis=0)
+    to_dispose = [1885, 3427, 3546, 5074, 6924, 7103, 7102, 8140]
+    Xtrain = np.delete(Xtrain, to_dispose, axis=0)
+    ytrain = np.delete(ytrain, to_dispose, axis=0)
 
-    #to_dispose_val = [916]
-    #Xval = np.delete(Xval, to_dispose_val, axis=0)
-    #yval = np.delete(yval, to_dispose_val, axis=0)
+    to_dispose_val = [916]
+    Xval = np.delete(Xval, to_dispose_val, axis=0)
+    yval = np.delete(yval, to_dispose_val, axis=0)
+    """
     def compute_stats(x,column=0):
         #compute some descriptive stats
         stats=[]
@@ -49,6 +50,7 @@ if __name__ == "__main__":
     def prepare_data(x):
         X=np.stack([compute_features(x_) for x_ in x])
         return X
+    """
 
     Xtrain=prepare_data(Xtrain, )
     Xval=prepare_data(Xval, )
