@@ -1,9 +1,14 @@
 ipykernel
 scipy
-numpy
+numpy==2.2.6
 pandas
 scikit-learn
 xgboost
 matplotlib
 seaborn
 vitaldb
+pywavelets
+pyemd
+antropy
+tqdm
+neurokit2

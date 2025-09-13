@@ -27,6 +27,71 @@ Each sample of the dataset comprises 20 seconds of five waveforms all sampled at
 - Photoplethysmogram  
 - Capnogram
 
+https://pubmed.ncbi.nlm.nih.gov/32768053/ (Wavelet decomp of ECG for Hypotension prediction)
+https://arxiv.org/abs/2311.01142?utm_source=chatgpt.com (Empirical Mode Decomposition of ECG for Hypotension prediction)
+
+# To many Features are not Goood!!!!!!
+## When adding the default features of all singals, we get way worse
+-> So, we start by finding out which signal brings most with default features
+
+
+# TODO: The features we want to test:
+- ECG lead II and V5
+  - Wavelet Decomposition coefficients, entropy
+  - Empirical Mode Decomposition (EMD) features
+
+```python
+# Wavelet Decomposition -> Entropy
+coeffs = pywt.wavedec(signal, 'bior3.3', level=5)
+
+features = []
+for subband in coeffs:
+  # Sample entropy
+  sampen = ant.sample_entropy(subband)
+  # Wavelet entropy (Shannon entropy of normalized coefficient energy)
+  e = subband**2
+  p = e / np.sum(e)
+  wavelet_entropy = -np.sum(p * np.log2(p + 1e-12))
+  features.extend([sampen, wavelet_entropy])
+```
+
+```python
+emd = EMD()
+imfs = emd(signal)
+
+features = []
+for imf in imfs[:5]:  # first 5 IMFs
+    sampen = ant.sample_entropy(imf)
+    # Additional features—fractal dimension, etc.
+    features.append(sampen)
+```
+
+- Capnogram:
+  - After some reasearch, there is no large correlation between capnogram and hypotension.
+  - Since hypertension is also seen in the co2 value: “If cardiac output … is decreased … this is reflected in a decreased expired amount of CO₂.” (wikipedia)
+  - We take the max End tidal CO2 value as a feature (mean and std)
+- Arterial Blood Pressure
+  - Systolic, Diastolic, Mean Arterial Pressure (MAP)
+  - Pulse Pressure (PP)
+  - Augmentation Index (AIx)
+  - Heart Rate (HR)
+  - Skewness, Kurtosis
+  - Power Spectral Density (PSD) features in different frequency bands (e.g., LF, HF)
+  - Wavelet Transform coefficients
+
+- Electrocardiogram (ECG) lead II and V5
+  - Heart Rate Variability (HRV) features (e.g., SDNN, RMSSD, pNN50)
+  - Mean and Std of RR intervals
+  - Skewness, Kurtosis
+  - Power Spectral Density (PSD) features in different frequency bands (e.g., LF, HF)
+  - Wavelet Transform coefficients
+
+- Photoplethysmogram (PPG)
+    - Pulse Rate Variability (PRV) features (e.g., SDNN, RMSSD, pNN50)
+    - Mean and Std of peak-to-peak intervals
+    - Skewness, Kurtosis
+    - Power Spectral Density (PSD) features in different frequency bands (e.g., LF, HF)
+    - Wavelet Transform coefficients
 # Goals
 Using the provided input signals,your task is to design features that will serve as inputs for training a machine learning model. For each 20-seconds segment, the model aims to predict whether an hypotensive episode will occur during a subsequent 20-second segment starting 1 minute later.
 
@@ -116,3 +181,4 @@ be considered.
 
 1. Lee HC, Park Y, Yoon SB, Yang SM, Park D, Jung CW. VitalDB, a high-fidelity multi-parameter vital signs database in surgical patients. Scientific Data. 2022 Jun 8;9(1):279. 
 
+,
